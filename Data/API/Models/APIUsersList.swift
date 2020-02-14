@@ -12,13 +12,16 @@ enum APIUsersList: API.Model {
         var results: Int
     }
     typealias Request = Empty
-    typealias Response = [APIUser.Model]
+    
+    struct Response: Decodable {
+        var results: [APIUser.Model]
+    }
  
     class Mapper: EntityMappable<Response, [User]> {
         
         override func to(entity type: APIUsersList.Response) -> [User] {
             let userMapper = APIUser.Mapper()
-            return type.map { userMapper.to(entity: $0) }
+            return type.results.map { userMapper.to(entity: $0) }
         }
         
     }

@@ -25,6 +25,7 @@ class UserRepository: UserRepositoryLogic {
         if fetchMore || cachedUsers == nil || cachedUsers!.isEmpty {
             cachedUsers = cachedUsers ?? []
             cachedUsers! += try remoteStore.fetchUsers()
+            try cacheStore.setUsers(cachedUsers!)
         }
         return cachedUsers!
     }

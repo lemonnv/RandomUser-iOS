@@ -44,6 +44,7 @@
 		7C94011423F545D300E73291 /* APIStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C94011323F545D300E73291 /* APIStore.swift */; };
 		7C94011823F5500100E73291 /* EntityMappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C94011723F5500100E73291 /* EntityMappable.swift */; };
 		7C94011B23F5874C00E73291 /* UserPrefsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C94011A23F5874C00E73291 /* UserPrefsStore.swift */; };
+		7C94011E23F59CDA00E73291 /* Assemblies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C94011D23F59CDA00E73291 /* Assemblies.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -99,6 +100,7 @@
 		7C94011323F545D300E73291 /* APIStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIStore.swift; sourceTree = "<group>"; };
 		7C94011723F5500100E73291 /* EntityMappable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityMappable.swift; sourceTree = "<group>"; };
 		7C94011A23F5874C00E73291 /* UserPrefsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPrefsStore.swift; sourceTree = "<group>"; };
+		7C94011D23F59CDA00E73291 /* Assemblies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assemblies.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,6 +263,7 @@
 		7C9400F323F32F7200E73291 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				7C94011C23F59CC600E73291 /* DI */,
 				7C94010D23F47F7400E73291 /* Auth */,
 				7C9400F723F330F300E73291 /* API */,
 				7C9400F423F3305900E73291 /* Repositories */,
@@ -331,6 +334,14 @@
 				7C94011723F5500100E73291 /* EntityMappable.swift */,
 			);
 			path = Mappable;
+			sourceTree = "<group>";
+		};
+		7C94011C23F59CC600E73291 /* DI */ = {
+			isa = PBXGroup;
+			children = (
+				7C94011D23F59CDA00E73291 /* Assemblies.swift */,
+			);
+			path = DI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -413,6 +424,7 @@
 				7C9400E423F3299C00E73291 /* DispatchResult.swift in Sources */,
 				7C9400E023F328E900E73291 /* Interactor.swift in Sources */,
 				7C9400FB23F3324B00E73291 /* APIClient.swift in Sources */,
+				7C94011E23F59CDA00E73291 /* Assemblies.swift in Sources */,
 				7C9400F623F3308200E73291 /* UserRepository.swift in Sources */,
 				7C94010723F47B9E00E73291 /* Empty.swift in Sources */,
 				7C9400D423F325C200E73291 /* Display.swift in Sources */,

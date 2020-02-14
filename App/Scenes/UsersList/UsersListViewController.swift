@@ -47,6 +47,7 @@ class UsersListViewController: UIViewController, UsersListDisplay {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.addSubview(tableView)
         tableView.frame = view.frame
         tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     }
@@ -69,7 +70,7 @@ extension UsersListViewController: UITableViewDataSource, UITableViewDelegate {
     private func setupTableView() {
         self.tableView.dataSource = self
         self.tableView.delegate = self
-//        self.tableView.register(UITableVI, forCellReuseIdentifier: <#T##String#>)
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: UsersListViewController.kUserCellIdentifier)
     }
     
     func numberOfSections(in tableView: UITableView) -> Int { 1 }

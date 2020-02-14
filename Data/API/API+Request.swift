@@ -28,7 +28,7 @@ extension API {
                 if let value = $0.value as? String {
                     return URLQueryItem(name: $0.key, value: value)
                 } else {
-                    return URLQueryItem(name: $0.key, value: $0.value.string)
+                    return URLQueryItem(name: $0.key, value: $0.value.description)
                 }
             })
             self.url = urlComponents.url!

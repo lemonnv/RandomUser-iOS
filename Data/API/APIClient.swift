@@ -48,6 +48,12 @@ class APIClient {
         }
         task.resume()
         semaphore.wait()
+        
+        if !response.statusCode.isSuccess {
+            print("API: \(request.method.rawValue) \(request.requestName) -> \(response.statusCode.rawValue)")
+        } else {
+            print("API: \(request.method.rawValue) \(request.url) -> \(response.statusCode.rawValue)")
+        }
         return response
     }
     
