@@ -15,6 +15,9 @@ enum APIUser: API.Model {
     struct Model: Codable {
         var name: Name
         var email: String
+        var gender: String
+        var phone: String
+        var nat: String
     }
     
     struct Name: Codable {
@@ -22,16 +25,26 @@ enum APIUser: API.Model {
         var first: String
         var last: String
     }
-    
+        
     class Mapper: EntityMappable<Model, User> {
 
         override func to(entity type: APIUser.Model) -> User {
-            User(
+            let gender: Gender?
+            switch type.gender {
+            case "female":
+                gender = .female
+            case "male":
+                gender = .male
+            default:
+                gender = nil
+            }
+            return User(
                 email: type.email,
                 firstName: type.name.first,
                 lastName: type.name.last,
-                gender: nil
-            )
+                gender: gender,
+                phoneNumber: type.phone,
+                nationality: type.nat)
         }
         
     }

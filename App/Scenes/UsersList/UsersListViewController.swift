@@ -114,6 +114,19 @@ extension UsersListViewController: UITableViewDataSource, UITableViewDelegate {
     
     private static let kUserCellIdentifier = "UserCell"
     
+    private class UserCell: UITableViewCell {
+        
+        override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+            super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+            accessoryType = .disclosureIndicator
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+    }
+    
     private static let kLoadMoreCellIdentifier = "LoadMoreCell"
     
     private class LoadMoreCell: UITableViewHeaderFooterView {
@@ -151,7 +164,7 @@ extension UsersListViewController: UITableViewDataSource, UITableViewDelegate {
         self.tableView.backgroundColor = .clear
         self.tableView.dataSource = self
         self.tableView.delegate = self
-        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: UsersListViewController.kUserCellIdentifier)
+        self.tableView.register(UserCell.self, forCellReuseIdentifier: UsersListViewController.kUserCellIdentifier)
         self.tableView.register(LoadMoreCell.self, forHeaderFooterViewReuseIdentifier: UsersListViewController.kLoadMoreCellIdentifier)
     }
     
@@ -173,9 +186,9 @@ extension UsersListViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: UsersListViewController.kUserCellIdentifier, for: indexPath)
-        cell.accessoryType = .disclosureIndicator
         let user = users[indexPath.row]
-        cell.textLabel?.text = "\(user.firstName) \(user.lastName)"
+        cell.textLabel?.text = user.fullName
+        cell.detailTextLabel?.text = user.email
         return cell
     }
     

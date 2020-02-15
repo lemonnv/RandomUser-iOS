@@ -49,5 +49,9 @@ public struct User: Codable {
     var email: String
     var firstName: String
     var lastName: String
+    var fullName: String { "\(firstName) \(lastName)" }
     var gender: Gender?
+    var phoneNumber: String
+    var nationality: String
+    
 }
