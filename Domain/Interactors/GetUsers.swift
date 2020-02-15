@@ -8,13 +8,12 @@
 
 import RxSwift
 
-public class GetUsersList: CompletableInteractor<[User], GetUsersList.Action> {
+public class GetUsers: CompletableInteractor<[User], GetUsers.Params> {
     
     //MARK: Params
     
-    public enum Action {
-        case `default`
-        case fetchMore
+    public struct Params {
+        var count: Int
     }
     
     private let userRepository: UserRepositoryLogic = resolve()
@@ -27,7 +26,7 @@ public class GetUsersList: CompletableInteractor<[User], GetUsersList.Action> {
     
     //MARK: Interactor
     
-    override func buildSingle(params: GetUsersList.Action) -> Single<[User]> {
-        single { try self.userRepository.getUsers(fetchMore: params == .fetchMore) }
+    override func buildSingle(params: GetUsers.Params) -> Single<[User]> {
+        single { try self.userRepository.getUsers(count: params.count) }
     }
 }

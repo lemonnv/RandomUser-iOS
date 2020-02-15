@@ -14,8 +14,8 @@ class APIStore {
 
 extension APIStore: RemoteUserStore {
     
-    func fetchUsers() throws -> [User] {
-        let response = try client.getRandomUsers(APIUsersList.Params(results: 10)).accept(.ok).body!
+    func fetchUsers(size: Int) throws -> [User] {
+        let response = try client.getRandomUsers(APIUsersList.Params(results: size)).accept(.ok).body!
         return APIUsersList.Mapper().to(entity: response)
     }
     

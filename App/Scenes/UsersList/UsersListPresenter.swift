@@ -10,7 +10,8 @@ import UIKit
 
 protocol UsersListPresentation: class {
     func present(user: User)
-    func loadMoreUsers()
+    func loadUsers(fetchMore: Bool)
+    func refresh()
 }
 
 
@@ -19,34 +20,53 @@ class UsersListPresenter: UsersListPresentation {
     private weak var view: UsersListDisplay?
     private var router: UsersListRouting?
 
-    private let getUsersList = GetUsersList()
+    private let getUsers = GetUsers()
+    private let getNewUsers = GetNewUsers()
+    
+    private var users: [User] = []
     
     //MARK: Object lifecycle
     
     public init(view: UsersListDisplay) {
         self.view = view
         router = resolve(argument: view.viewController)
-        
-        getUsersList.run(params: .default) { [weak self] result in
-            if let error = result.error {
-                self?.view?.display(error: error, animated: true)
-            }
-            self?.view?.display(users: result.value ?? [])
-        }
     }
     
     // MARK: Presentation
     
     func present(user: User) {
-        
+        self.router?.routeToDetail(user: user)
     }
     
-    func loadMoreUsers() {
-        getUsersList.run(params: .fetchMore) { [weak self] result in
+    func loadUsers(fetchMore: Bool) {
+        guard let visibleCellCount = self.view?.visibleCellCount else { return }
+        let count = max(visibleCellCount, users.count) + (fetchMore ? visibleCellCount : 0)
+        self.view?.isLoading = true
+        getUsers.run(params: GetUsers.Params(count: count)) { [weak self] result in
+            self?.view?.isLoading = false
             if let error = result.error {
                 self?.view?.display(error: error, animated: true)
             }
-            self?.view?.display(users: result.value ?? [])
+            let users = result.value ?? []
+            self?.users = users
+            self?.view?.display(users: users)
+        }
+    }
+        
+    func refresh() {
+        guard let visibleCellCount = self.view?.visibleCellCount else { return }
+
+        self.users = []
+        self.view?.isLoading = true
+        self.view?.display(users: self.users)
+        self.getNewUsers.run(params: GetUsers.Params(count: visibleCellCount)) { [weak self] result in
+            self?.view?.isLoading = false
+            if let error = result.error {
+                self?.view?.display(error: error, animated: true)
+            }
+            let users = result.value ?? []
+            self?.users = users
+            self?.view?.display(users: users)
         }
     }
 }

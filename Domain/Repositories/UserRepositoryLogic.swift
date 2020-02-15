@@ -7,5 +7,6 @@
 //
 
 public protocol UserRepositoryLogic {
-    func getUsers(fetchMore: Bool) throws -> [User]
+    func getUsers(count: Int) throws -> [User]
+    func deleteAll() throws
 }

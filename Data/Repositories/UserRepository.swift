@@ -12,7 +12,7 @@ protocol CacheUserStore {
 }
 
 protocol RemoteUserStore {
-    func fetchUsers() throws -> [User]
+    func fetchUsers(size: Int) throws -> [User]
 }
 
 class UserRepository: UserRepositoryLogic {
@@ -20,14 +20,18 @@ class UserRepository: UserRepositoryLogic {
     private let remoteStore: RemoteUserStore = resolve()
     private let cacheStore: CacheUserStore = resolve()
     
-    func getUsers(fetchMore: Bool) throws -> [User] {
+    func getUsers(count: Int) throws -> [User] {
         var cachedUsers = try cacheStore.getUsers()
-        if fetchMore || cachedUsers == nil || cachedUsers!.isEmpty {
+        if cachedUsers == nil || cachedUsers!.count < count {
             cachedUsers = cachedUsers ?? []
-            cachedUsers! += try remoteStore.fetchUsers()
+            cachedUsers! += try remoteStore.fetchUsers(size: count - cachedUsers!.count)
             try cacheStore.setUsers(cachedUsers!)
         }
         return cachedUsers!
+    }
+    
+    func deleteAll() throws {
+        try cacheStore.setUsers([])
     }
     
 }
