@@ -101,7 +101,7 @@ class UsersListViewController: UIViewController, UsersListDisplay {
     }
     
     var visibleCellCount: Int {
-        30
+        10
     }
     
     func display(users: [User]) {
