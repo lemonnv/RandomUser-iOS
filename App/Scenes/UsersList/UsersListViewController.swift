@@ -46,6 +46,8 @@ class UsersListViewController: UIViewController, UsersListDisplay {
     override func loadView() {
         super.loadView()
         
+        navigationItem.title = "RandomUser"
+        
         view.backgroundColor = .white
         setupTableView()
     }

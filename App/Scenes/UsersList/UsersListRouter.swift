@@ -26,7 +26,7 @@ class UsersListRouter: UsersListRouting {
     //MARK: Routing
     
     func routeToDetail(user: User) {
-        let userDetailsDisplay: UserDetailsDisplay = resolve()
+        let userDetailsDisplay: UserDetailsDisplay = resolve(argument: user)
         if let userDetailsViewController = userDetailsDisplay.viewController {
             self.viewController?.navigationController?.pushViewController(userDetailsViewController, animated: true)
         }
