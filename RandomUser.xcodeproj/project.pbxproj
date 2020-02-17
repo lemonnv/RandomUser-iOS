@@ -115,6 +115,7 @@
 		7C94013523F8332400E73291 /* UserDetailsRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsRouter.swift; sourceTree = "<group>"; };
 		7C94013623F8332400E73291 /* UserDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsViewController.swift; sourceTree = "<group>"; };
 		7C94013723F8332400E73291 /* UserDetailsAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsAssembly.swift; sourceTree = "<group>"; };
+		7CA198F423FA954600AED626 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +134,7 @@
 		7C9400A123F3249600E73291 = {
 			isa = PBXGroup;
 			children = (
+				7CA198F423FA954600AED626 /* README.md */,
 				7C9400E123F3291300E73291 /* Cartfile */,
 				7C9400AC23F3249600E73291 /* App */,
 				7C9400D123F3255100E73291 /* Domain */,
