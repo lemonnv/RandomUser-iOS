@@ -7,10 +7,10 @@
 //
 
 import UIKit
+import Koloda
 
 protocol UsersListDisplay: Display {
     var isLoading: Bool { get set }
-    var visibleCellCount: Int { get }
     func display(users: [User])
 }
 
@@ -23,11 +23,26 @@ class UsersListViewController: UIViewController, UsersListDisplay {
     
     //MARK: UI components
     
-    private let refreshControl = UIRefreshControl()
-    
-    private let tableView = UITableView(frame: .zero, style: .grouped).apply { tableView in
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+    private let kolodaView = KolodaView().apply { koloda in
+        koloda.translatesAutoresizingMaskIntoConstraints = false
     }
+    
+    private let buttonsView = UIStackView().apply { stackView in
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.distribution = .equalSpacing
+        stackView.axis = .horizontal
+    }
+    
+    private let thumbUpButton = UIButton().apply { button in
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "icon-thumb-up"), for: .normal)
+    }
+    
+    private let thumbDownButton = UIButton().apply { button in
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "icon-thumb-down"), for: .normal)
+    }
+
     
     //MARK: Object lifecycle
     
@@ -48,23 +63,32 @@ class UsersListViewController: UIViewController, UsersListDisplay {
         
         navigationItem.title = "RandomUser"
         
-        view.backgroundColor = .white
-        setupTableView()
+        view.backgroundColor = UIColor(named: "background")
+        setupKolodaView()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.addSubview(tableView)
+                
+        view.addSubview(kolodaView)
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.safeLeftAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.safeRightAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
+            kolodaView.leftAnchor.constraint(equalTo: view.safeLeftAnchor, constant: 24),
+            kolodaView.topAnchor.constraint(equalTo: view.safeTopAnchor, constant: 24),
+            kolodaView.rightAnchor.constraint(equalTo: view.safeRightAnchor, constant: -24)
         ])
         
-        tableView.addSubview(refreshControl)
-        refreshControl.addTarget(self, action: #selector(pullToRefresh), for: .valueChanged)
+        view.addSubview(buttonsView)
+        NSLayoutConstraint.activate([
+            buttonsView.topAnchor.constraint(equalTo: kolodaView.bottomAnchor, constant: 48),
+            buttonsView.leftAnchor.constraint(equalTo: view.safeLeftAnchor, constant: 48),
+            buttonsView.rightAnchor.constraint(equalTo: view.safeRightAnchor, constant: -48),
+            buttonsView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -48)
+        ])
+        
+        buttonsView.addArrangedSubview(thumbDownButton)
+        buttonsView.addArrangedSubview(thumbUpButton)
+        
+        self.presenter?.loadUsers(fetchMore: false)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -73,22 +97,10 @@ class UsersListViewController: UIViewController, UsersListDisplay {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.presenter?.loadUsers(fetchMore: false)
     }
     
     //MARK: Actions
     
-    @objc private func pullToRefresh() {
-        self.presenter?.refresh()
-    }
-    
-    private func loadMoreCellWillDisplay() {
-        self.presenter?.loadUsers(fetchMore: true)
-    }
-    
-    private func didSelectUser(user: User) {
-        self.presenter?.present(user: user)
-    }
     
     //MARK: Display
     
@@ -96,124 +108,37 @@ class UsersListViewController: UIViewController, UsersListDisplay {
     
     var isLoading: Bool = false {
         didSet {
-            isLoading ? refreshControl.beginRefreshing() : refreshControl.endRefreshing()
         }
     }
-    
-    var visibleCellCount: Int {
-        10
-    }
-    
+        
     func display(users: [User]) {
         self.users = users
-        tableView.reloadData()
+        kolodaView.reloadData()
     }
 }
 
-extension UsersListViewController: UITableViewDataSource, UITableViewDelegate {
-    
-    //MARK: Cells
-    
-    private static let kUserCellIdentifier = "UserCell"
-    
-    private class UserCell: UITableViewCell {
+extension UsersListViewController: KolodaViewDelegate, KolodaViewDataSource {
         
-        override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-            super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
-            accessoryType = .disclosureIndicator
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-    }
-    
-    private static let kLoadMoreCellIdentifier = "LoadMoreCell"
-    
-    private class LoadMoreCell: UITableViewHeaderFooterView {
-        
-        let activityIndicator = UIActivityIndicatorView(style: .medium).apply { indicator in
-            indicator.translatesAutoresizingMaskIntoConstraints = false
-            indicator.color = .black
-            indicator.hidesWhenStopped = false
-        }
-        
-        override init(reuseIdentifier: String?) {
-            super.init(reuseIdentifier: reuseIdentifier)
-            
-            contentView.backgroundColor = .clear
-
-            contentView.addSubview(activityIndicator)
-            NSLayoutConstraint.activate([
-                activityIndicator.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-                activityIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-                activityIndicator.widthAnchor.constraint(equalToConstant: 30),
-                activityIndicator.heightAnchor.constraint(equalToConstant: 30)
-            ])
-
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-    }
-    
     //MARK: Setup
     
-    private func setupTableView() {
-        self.tableView.backgroundColor = .clear
-        self.tableView.dataSource = self
-        self.tableView.delegate = self
-        self.tableView.register(UserCell.self, forCellReuseIdentifier: UsersListViewController.kUserCellIdentifier)
-        self.tableView.register(LoadMoreCell.self, forHeaderFooterViewReuseIdentifier: UsersListViewController.kLoadMoreCellIdentifier)
+    private func setupKolodaView() {
+        kolodaView.delegate = self
+        kolodaView.dataSource = self
+        kolodaView.countOfVisibleCards = 3
     }
     
     // MARK: Data Source & Delegate
     
-    func numberOfSections(in tableView: UITableView) -> Int { 1 }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        users.count
+    func kolodaNumberOfCards(_ koloda: KolodaView) -> Int {
+        self.users.count
     }
     
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        0.0
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        nil
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: UsersListViewController.kUserCellIdentifier, for: indexPath)
-        let user = users[indexPath.row]
-        cell.textLabel?.text = user.fullName
-        cell.detailTextLabel?.text = user.email
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        self.users.count > 0 ? 40 : 0
-    }
-    
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        guard self.users.count > 0 else { return nil }
-        let footer = tableView.dequeueReusableHeaderFooterView(withIdentifier: UsersListViewController.kLoadMoreCellIdentifier)
-        return footer
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
-        guard let loadMoreCell = view as? LoadMoreCell else { return }
-        
-        loadMoreCell.activityIndicator.startAnimating()
-        self.loadMoreCellWillDisplay()
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let user = self.users[indexPath.row]
-        didSelectUser(user: user)
+    func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
+        let userCard = UserCardView()
+        let user = self.users[index]
+        userCard.image = UIImage(named: "image-appartment-1")
+        userCard.user = user
+        return userCard
     }
 }
 

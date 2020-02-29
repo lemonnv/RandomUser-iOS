@@ -1,3 +1,4 @@
 github "ReactiveX/RxSwift" "5.0.1"
 github "Swinject/Swinject" "2.7.1"
-github "salmaanahmed/PaginatedTableView" "1.0.1"
+github "Yalantis/Koloda" "5.0"
+github "facebook/pop" "1.0.12"

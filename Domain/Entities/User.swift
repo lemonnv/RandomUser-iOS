@@ -6,6 +6,8 @@
 //  Copyright © 2020 Vincent Lemonnier. All rights reserved.
 //
 
+import Foundation
+
 public enum Gender {
     case male, female
 }
@@ -44,6 +46,11 @@ extension Gender: Codable {
     }
 }
 
+public struct UserPicture: Codable {
+    var thumbnail: URL
+    var medium: URL
+    var large: URL
+}
 
 public struct User: Codable {
     var email: String
@@ -53,5 +60,6 @@ public struct User: Codable {
     var gender: Gender?
     var phoneNumber: String
     var nationality: String
+    var picture: UserPicture?
     
 }

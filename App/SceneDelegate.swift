@@ -20,9 +20,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let windowScene = scene as? UIWindowScene {
 
             let window = UIWindow(windowScene: windowScene)
-            let usersList: UsersListViewController = resolve()
+            let usersList: UsersListDisplay = resolve()
 
-            let navigation = UINavigationController(rootViewController: usersList)
+            let navigation = NavigationController(rootViewController: usersList.viewController!)
             window.rootViewController = navigation
 
             self.window = window

@@ -6,6 +6,8 @@
 //  Copyright © 2020 Vincent Lemonnier. All rights reserved.
 //
 
+import Foundation
+
 enum APIUser: API.Model {
     
     typealias Params = Empty
@@ -18,12 +20,19 @@ enum APIUser: API.Model {
         var gender: String
         var phone: String
         var nat: String
+        var picture: Picture
     }
     
     struct Name: Codable {
         var title: String
         var first: String
         var last: String
+    }
+    
+    struct Picture: Codable {
+        var thumbnail: String
+        var medium: String
+        var large: String
     }
         
     class Mapper: EntityMappable<Model, User> {
@@ -38,14 +47,29 @@ enum APIUser: API.Model {
             default:
                 gender = nil
             }
+            
             return User(
                 email: type.email,
                 firstName: type.name.first,
                 lastName: type.name.last,
                 gender: gender,
                 phoneNumber: type.phone,
-                nationality: type.nat)
+                nationality: type.nat,
+                picture: type.picture.entity
+            )
         }
         
     }
+}
+
+private extension APIUser.Picture {
+    
+    var entity: UserPicture? {
+        UserPicture(
+            thumbnail: URL(string: thumbnail)!,
+            medium: URL(string: medium)!,
+            large: URL(string: large)!
+        )
+    }
+    
 }

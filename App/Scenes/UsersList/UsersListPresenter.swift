@@ -8,12 +8,13 @@
 
 import UIKit
 
+private let kVisibleUserCount = 10
+
 protocol UsersListPresentation: class {
     func present(user: User)
     func loadUsers(fetchMore: Bool)
     func refresh()
 }
-
 
 class UsersListPresenter: UsersListPresentation {
     
@@ -39,8 +40,7 @@ class UsersListPresenter: UsersListPresentation {
     }
     
     func loadUsers(fetchMore: Bool) {
-        guard let visibleCellCount = self.view?.visibleCellCount else { return }
-        let count = max(visibleCellCount, users.count) + (fetchMore ? visibleCellCount : 0)
+        let count = max(kVisibleUserCount, users.count) + (fetchMore ? kVisibleUserCount : 0)
         self.view?.isLoading = true
         getUsers.run(params: GetUsers.Params(count: count)) { [weak self] result in
             self?.view?.isLoading = false
@@ -54,12 +54,10 @@ class UsersListPresenter: UsersListPresentation {
     }
         
     func refresh() {
-        guard let visibleCellCount = self.view?.visibleCellCount else { return }
-
         self.users = []
         self.view?.isLoading = true
         self.view?.display(users: self.users)
-        self.getNewUsers.run(params: GetUsers.Params(count: visibleCellCount)) { [weak self] result in
+        self.getNewUsers.run(params: GetUsers.Params(count: kVisibleUserCount)) { [weak self] result in
             self?.view?.isLoading = false
             if let error = result.error {
                 self?.view?.display(error: error, animated: true)
