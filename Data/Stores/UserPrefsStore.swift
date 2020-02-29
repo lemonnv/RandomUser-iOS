@@ -25,7 +25,7 @@ extension UserPrefsStore: CacheUserStore {
     
     func getUsers() throws -> [User]? {
         if let data = self.userDefaults.object(forKey: kUsersKey) as? Data {
-            return try JSONDecoder().decode([User].self, from: data)
+            return try? JSONDecoder().decode([User].self, from: data)
         }
         return nil
     }

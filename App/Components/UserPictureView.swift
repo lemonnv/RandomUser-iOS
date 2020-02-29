@@ -27,10 +27,16 @@ class UserPictureView: UIImageView {
     init(size: Size) {
         self.size = size
         super.init(image: nil)
+        layer.masksToBounds = true
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = max(frame.width, frame.height) / 2
     }
     
     private func updatePictureImage() {

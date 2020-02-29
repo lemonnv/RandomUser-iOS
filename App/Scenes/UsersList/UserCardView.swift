@@ -17,27 +17,45 @@ class UserCardView: UIView {
         imageView.contentMode = .scaleAspectFill
     }
     
+    private let cityLabel = UILabel().apply { cityLabel in
+        cityLabel.translatesAutoresizingMaskIntoConstraints = false
+        cityLabel.numberOfLines = 1
+    }
+    
+    private let streetAddress = UILabel().apply { streetAddress in
+        streetAddress.translatesAutoresizingMaskIntoConstraints = false
+        streetAddress.numberOfLines = 1
+    }
+    
+    private let seperator = UIView().apply { separator in
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.backgroundColor = UIColor(named: "primary100")
+        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
+    }
+    
     private lazy var profileView = UIView().apply { profileView in
         profileView.translatesAutoresizingMaskIntoConstraints = false
         
         profileView.addSubview(profileImageView)
+        profileImageView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         NSLayoutConstraint.activate([
             profileImageView.topAnchor.constraint(equalTo: profileView.topAnchor),
             profileImageView.leftAnchor.constraint(equalTo: profileView.leftAnchor),
-            profileImageView.bottomAnchor.constraint(equalTo: profileView.bottomAnchor)
+            profileImageView.bottomAnchor.constraint(equalTo: profileView.bottomAnchor),
+            profileImageView.heightAnchor.constraint(equalTo: profileImageView.widthAnchor, multiplier: 1)
         ])
         
         profileView.addSubview(userName)
         NSLayoutConstraint.activate([
             userName.topAnchor.constraint(equalTo: profileView.topAnchor),
-            userName.leftAnchor.constraint(equalTo: profileImageView.rightAnchor),
+            userName.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 16),
             userName.rightAnchor.constraint(equalTo: profileView.rightAnchor)
         ])
         
         profileView.addSubview(userAge)
         NSLayoutConstraint.activate([
             userAge.topAnchor.constraint(equalTo: userName.bottomAnchor),
-            userAge.leftAnchor.constraint(equalTo: profileImageView.rightAnchor),
+            userAge.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 16),
             userAge.rightAnchor.constraint(equalTo: profileView.rightAnchor),
             userAge.bottomAnchor.constraint(equalTo: profileView.bottomAnchor)
         ])
@@ -55,13 +73,7 @@ class UserCardView: UIView {
     private lazy var userAge = UILabel().apply { label in
         label.translatesAutoresizingMaskIntoConstraints = false
     }
-    
-    private let seperator = UIView().apply { separator in
-        separator.translatesAutoresizingMaskIntoConstraints = false
-        separator.backgroundColor = UIColor(named: "primary100")
-        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
-    }
-    
+        
     //MARK: Object lifecyle
     
     init() {
@@ -73,18 +85,31 @@ class UserCardView: UIView {
         layer.shadowRadius = 5
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOffset = .init(width: 0.0, height: 4.0)
+        layer.shadowOpacity = 0.5
         
         addSubview(imageView)
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: topAnchor),
             imageView.leftAnchor.constraint(equalTo: leftAnchor),
-            imageView.rightAnchor.constraint(equalTo: rightAnchor),
-            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 1)
+            imageView.rightAnchor.constraint(equalTo: rightAnchor)
+        ])
+        
+        addSubview(cityLabel)
+        NSLayoutConstraint.activate([
+            cityLabel.leftAnchor.constraint(equalTo: imageView.leftAnchor, constant: 16),
+            cityLabel.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -16)
+        ])
+        
+        addSubview(streetAddress)
+        NSLayoutConstraint.activate([
+            streetAddress.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
+            streetAddress.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
+            streetAddress.rightAnchor.constraint(equalTo: rightAnchor, constant: -16)
         ])
         
         addSubview(seperator)
         NSLayoutConstraint.activate([
-            seperator.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
+            seperator.topAnchor.constraint(equalTo: streetAddress.bottomAnchor, constant: 16),
             seperator.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
             seperator.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
         ])
@@ -117,7 +142,10 @@ class UserCardView: UIView {
     private func updateUser() {
         profileImageView.picture = user?.picture
         userName.attributedText = .init(string: user?.fullName ?? "", style: .h3Left)
-        userAge.attributedText = .init(string: "25 years old", style: .bodyPrimaryLeft)
+        userAge.attributedText = .init(string: user != nil ? "\(user!.age) years old" : "", style: .bodyPrimaryLeft)
+        
+        cityLabel.attributedText = .init(string: (user != nil) ? "\(user!.address.city), \(user!.address.country)" : "", style: .h1InverseLeft)
+        streetAddress.attributedText = .init(string: (user != nil) ? "\(user!.address.number) \(user!.address.streetName)" : "", style: .h3Left)
     }
     
 }

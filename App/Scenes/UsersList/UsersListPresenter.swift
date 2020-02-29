@@ -12,8 +12,7 @@ private let kVisibleUserCount = 10
 
 protocol UsersListPresentation: class {
     func present(user: User)
-    func loadUsers(fetchMore: Bool)
-    func refresh()
+    func loadUsers(forceRefresh: Bool)
 }
 
 class UsersListPresenter: UsersListPresentation {
@@ -39,10 +38,9 @@ class UsersListPresenter: UsersListPresentation {
         self.router?.routeToDetail(user: user)
     }
     
-    func loadUsers(fetchMore: Bool) {
-        let count = max(kVisibleUserCount, users.count) + (fetchMore ? kVisibleUserCount : 0)
+    func loadUsers(forceRefresh: Bool) {
         self.view?.isLoading = true
-        getUsers.run(params: GetUsers.Params(count: count)) { [weak self] result in
+        getUsers.run(params: GetUsers.Params(count: kVisibleUserCount, forceRefresh: forceRefresh)) { [weak self] result in
             self?.view?.isLoading = false
             if let error = result.error {
                 self?.view?.display(error: error, animated: true)
@@ -53,18 +51,4 @@ class UsersListPresenter: UsersListPresentation {
         }
     }
         
-    func refresh() {
-        self.users = []
-        self.view?.isLoading = true
-        self.view?.display(users: self.users)
-        self.getNewUsers.run(params: GetUsers.Params(count: kVisibleUserCount)) { [weak self] result in
-            self?.view?.isLoading = false
-            if let error = result.error {
-                self?.view?.display(error: error, animated: true)
-            }
-            let users = result.value ?? []
-            self?.users = users
-            self?.view?.display(users: users)
-        }
-    }
 }

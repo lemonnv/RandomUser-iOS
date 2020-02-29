@@ -20,6 +20,8 @@ extension TextStyle {
     
     static let titlePrimaryCenter = TextStyle(font: .systemFont(ofSize: 16, weight: .heavy), textAligment: .center, color: UIColor(named: "primary200")!)
     
+    static let h1InverseLeft = TextStyle(font: .systemFont(ofSize: 21, weight: .semibold), textAligment: .left, color: UIColor(named: "onPrimary")!)
+    
     static let h3Left = TextStyle(font: .systemFont(ofSize: 15, weight: .semibold), textAligment: .left, color: UIColor(named: "onSurface200")!)
     
     static let bodyPrimaryLeft = TextStyle(font: UIFont.systemFont(ofSize: 13, weight: .regular), textAligment: .left, color: UIColor(named: "onSurface100")!)

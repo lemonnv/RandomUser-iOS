@@ -52,14 +52,23 @@ public struct UserPicture: Codable {
     var large: URL
 }
 
+public struct Address: Codable {
+    var number: Int
+    var streetName: String
+    var city: String
+    var country: String
+}
+
 public struct User: Codable {
     var email: String
     var firstName: String
     var lastName: String
     var fullName: String { "\(firstName) \(lastName)" }
     var gender: Gender?
+    var age: Int
     var phoneNumber: String
     var nationality: String
     var picture: UserPicture?
+    var address: Address
     
 }

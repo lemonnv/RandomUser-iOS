@@ -18,9 +18,11 @@ enum APIUser: API.Model {
         var name: Name
         var email: String
         var gender: String
+        var dob: DateOfBirth
         var phone: String
         var nat: String
         var picture: Picture
+        var location: Location
     }
     
     struct Name: Codable {
@@ -29,10 +31,26 @@ enum APIUser: API.Model {
         var last: String
     }
     
+    struct DateOfBirth: Codable {
+        var date: String
+        var age: Int
+    }
+    
     struct Picture: Codable {
         var thumbnail: String
         var medium: String
         var large: String
+    }
+    
+    struct Location: Codable {
+        var street: Street
+        var city: String
+        var country: String
+        
+        struct Street: Codable {
+            var number: Int
+            var name: String
+        }
     }
         
     class Mapper: EntityMappable<Model, User> {
@@ -53,9 +71,11 @@ enum APIUser: API.Model {
                 firstName: type.name.first,
                 lastName: type.name.last,
                 gender: gender,
+                age: type.dob.age,
                 phoneNumber: type.phone,
                 nationality: type.nat,
-                picture: type.picture.entity
+                picture: type.picture.entity,
+                address: type.location.entity
             )
         }
         
@@ -70,6 +90,14 @@ private extension APIUser.Picture {
             medium: URL(string: medium)!,
             large: URL(string: large)!
         )
+    }
+    
+}
+
+private extension APIUser.Location {
+    
+    var entity: Address {
+        Address(number: street.number, streetName: street.name, city: city, country: country)
     }
     
 }

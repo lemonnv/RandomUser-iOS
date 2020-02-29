@@ -14,6 +14,7 @@ public class GetUsers: CompletableInteractor<[User], GetUsers.Params> {
     
     public struct Params {
         var count: Int
+        var forceRefresh: Bool
     }
     
     private let userRepository: UserRepositoryLogic = resolve()
@@ -27,6 +28,11 @@ public class GetUsers: CompletableInteractor<[User], GetUsers.Params> {
     //MARK: Interactor
     
     override func buildSingle(params: GetUsers.Params) -> Single<[User]> {
-        single { try self.userRepository.getUsers(count: params.count) }
+        single {
+            if params.forceRefresh {
+                try self.userRepository.deleteAll()
+            }
+            return try self.userRepository.getUsers(count: params.count)
+        }
     }
 }

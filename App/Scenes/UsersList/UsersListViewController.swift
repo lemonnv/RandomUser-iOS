@@ -23,6 +23,12 @@ class UsersListViewController: UIViewController, UsersListDisplay {
     
     //MARK: UI components
     
+    private let activityIndicator = UIActivityIndicatorView(style: .large).apply { indicator in
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.hidesWhenStopped = true
+        indicator.color = UIColor(named: "primary200")
+    }
+    
     private let kolodaView = KolodaView().apply { koloda in
         koloda.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -76,6 +82,12 @@ class UsersListViewController: UIViewController, UsersListDisplay {
             kolodaView.topAnchor.constraint(equalTo: view.safeTopAnchor, constant: 24),
             kolodaView.rightAnchor.constraint(equalTo: view.safeRightAnchor, constant: -24)
         ])
+
+        view.insertSubview(activityIndicator, at: 0)
+        NSLayoutConstraint.activate([
+            activityIndicator.centerYAnchor.constraint(equalTo: kolodaView.centerYAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: kolodaView.centerXAnchor)
+        ])
         
         view.addSubview(buttonsView)
         NSLayoutConstraint.activate([
@@ -85,10 +97,13 @@ class UsersListViewController: UIViewController, UsersListDisplay {
             buttonsView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -48)
         ])
         
+        thumbUpButton.addTarget(self, action: #selector(onTapThumb(sender:)), for: .touchUpInside)
+        thumbDownButton.addTarget(self, action: #selector(onTapThumb(sender:)), for: .touchUpInside)
+        
         buttonsView.addArrangedSubview(thumbDownButton)
         buttonsView.addArrangedSubview(thumbUpButton)
         
-        self.presenter?.loadUsers(fetchMore: false)
+        self.presenter?.loadUsers(forceRefresh: false)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -101,6 +116,9 @@ class UsersListViewController: UIViewController, UsersListDisplay {
     
     //MARK: Actions
     
+    @objc private func onTapThumb(sender: UIButton) {
+        kolodaView.swipe((sender == thumbUpButton) ? .right : .left, force: true)
+    }
     
     //MARK: Display
     
@@ -108,12 +126,17 @@ class UsersListViewController: UIViewController, UsersListDisplay {
     
     var isLoading: Bool = false {
         didSet {
+            if isLoading {
+                activityIndicator.startAnimating()
+            } else {
+                activityIndicator.stopAnimating()
+            }
         }
     }
         
     func display(users: [User]) {
         self.users = users
-        kolodaView.reloadData()
+        kolodaView.resetCurrentCardIndex()
     }
 }
 
@@ -139,6 +162,10 @@ extension UsersListViewController: KolodaViewDelegate, KolodaViewDataSource {
         userCard.image = UIImage(named: "image-appartment-1")
         userCard.user = user
         return userCard
+    }
+    
+    func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
+        self.presenter?.loadUsers(forceRefresh: true)
     }
 }
 
