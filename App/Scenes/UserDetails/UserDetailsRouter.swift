@@ -9,6 +9,7 @@
 import UIKit
 
 protocol UserDetailsRouting: class {
+    func routeToParent()
     func routeToDialNumber(phone: String)
 }
 
@@ -25,5 +26,9 @@ class UserDetailsRouter: UserDetailsRouting {
     
     func routeToDialNumber(phone: String) {
         UIApplication.shared.open(URL(string: "tel://\(phone)")!)
+    }
+    
+    func routeToParent() {
+        viewController?.dismiss(animated: true, completion: nil)
     }
 }

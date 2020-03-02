@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 private let kLoremIpsumString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eu semper velit. Nam tempor gravida libero, a gravida odio dapibus at. Donec sagittis neque lacus, vel posuere tortor volutpat et. Nulla ut tempor arcu. Quisque id sapien at augue elementum consequat. Vestibulum ac consequat quam."
 
 protocol UserDetailsDisplay: Display {
@@ -20,6 +19,11 @@ class UserDetailsViewController: UIViewController, UserDetailsDisplay {
     private var presenter: UserDetailsPresentation?
     
     //MARK: UI Components
+    
+    private let closeButton = UIButton().apply { button in
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "icon-close"), for: .normal)
+    }
     
     private let scrollView = UIScrollView().apply { scrollView in
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -237,6 +241,13 @@ class UserDetailsViewController: UIViewController, UserDetailsDisplay {
             scrollView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
         ])
         
+        view.addSubview(closeButton)
+        closeButton.addTarget(self, action: #selector(onTapCloseButton), for: .touchUpInside)
+        NSLayoutConstraint.activate([
+            closeButton.leftAnchor.constraint(equalTo: view.safeLeftAnchor, constant: 16),
+            closeButton.topAnchor.constraint(equalTo: view.safeTopAnchor, constant: 16)
+        ])
+        
         scrollView.addSubview(stackView)
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
@@ -257,6 +268,10 @@ class UserDetailsViewController: UIViewController, UserDetailsDisplay {
     
     //MARK: Actions
 
+    @objc private func onTapCloseButton() {
+        presenter?.close()
+    }
+    
     @objc private func onTapCallButton() {
         presenter?.presentDialNumber()
     }

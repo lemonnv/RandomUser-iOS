@@ -67,7 +67,7 @@ class UsersListViewController: UIViewController, UsersListDisplay {
     override func loadView() {
         super.loadView()
         
-        navigationItem.title = "RandomRoomate"
+        navigationItem.title = "RandomRoommate"
         
         view.backgroundColor = UIColor(named: "background")
         setupKolodaView()

@@ -11,6 +11,7 @@ import UIKit
 protocol UserDetailsPresentation: class {
     var user: User { get }
     func presentDialNumber()
+    func close()
 }
 
 
@@ -32,5 +33,9 @@ class UserDetailsPresenter: UserDetailsPresentation {
     
     func presentDialNumber() {
         router?.routeToDialNumber(phone: user.phoneNumber)
+    }
+    
+    func close() {
+        router?.routeToParent()
     }
 }
