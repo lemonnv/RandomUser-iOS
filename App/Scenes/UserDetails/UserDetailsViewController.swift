@@ -35,9 +35,24 @@ class UserDetailsViewController: UIViewController, UserDetailsDisplay {
     private lazy var addressView = UIView().apply { view in
         view.backgroundColor = UIColor(named: "surface")
         
-        view.layoutMargins = .init(top: 16, left: 16, bottom: 16, right: 16)
+        view.layoutMargins = .init(top: 26, left: 16, bottom: 16, right: 16)
         
         let user = self.presenter!.user
+        
+        let callButton = UIButton()
+        callButton.translatesAutoresizingMaskIntoConstraints = false
+        callButton.backgroundColor = UIColor(named: "primary200")
+        callButton.setImage(UIImage(named: "icon-phone-call")!, for: .normal)
+        callButton.layer.cornerRadius = 28
+        callButton.layer.masksToBounds = true
+        view.addSubview(callButton)
+        NSLayoutConstraint.activate([
+            callButton.heightAnchor.constraint(equalToConstant: 56),
+            callButton.widthAnchor.constraint(equalToConstant: 56),
+            callButton.centerYAnchor.constraint(equalTo: view.topAnchor),
+            callButton.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor)
+        ])
+        callButton.addTarget(self, action: #selector(onTapCallButton), for: .touchUpInside)
         
         let cityName = UILabel()
         cityName.translatesAutoresizingMaskIntoConstraints = false
@@ -240,14 +255,16 @@ class UserDetailsViewController: UIViewController, UserDetailsDisplay {
         
     }
     
-    
+    //MARK: Actions
+
+    @objc private func onTapCallButton() {
+        presenter?.presentDialNumber()
+    }
+
     //MARK: Display
     
     var screenName: String? = "UserDetails"
     
-    func displayUser(_ user: User) {
-        
-    }
 }
 
 private class AmenityView: UIView {

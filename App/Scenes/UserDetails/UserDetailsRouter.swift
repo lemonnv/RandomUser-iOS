@@ -9,7 +9,7 @@
 import UIKit
 
 protocol UserDetailsRouting: class {
-    
+    func routeToDialNumber(phone: String)
 }
 
 class UserDetailsRouter: UserDetailsRouting {
@@ -21,5 +21,9 @@ class UserDetailsRouter: UserDetailsRouting {
     
     public init(viewController: UIViewController?) {
         self.viewController = viewController
+    }
+    
+    func routeToDialNumber(phone: String) {
+        UIApplication.shared.open(URL(string: "tel://\(phone)")!)
     }
 }

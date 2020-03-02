@@ -10,6 +10,7 @@ import UIKit
 
 protocol UserDetailsPresentation: class {
     var user: User { get }
+    func presentDialNumber()
 }
 
 
@@ -27,5 +28,9 @@ class UserDetailsPresenter: UserDetailsPresentation {
         self.user = user
         router = resolve(argument: view.viewController)
         
+    }
+    
+    func presentDialNumber() {
+        router?.routeToDialNumber(phone: user.phoneNumber)
     }
 }
