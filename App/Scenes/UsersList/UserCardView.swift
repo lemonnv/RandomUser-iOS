@@ -59,7 +59,8 @@ class UserCardView: UIView {
             userAge.topAnchor.constraint(equalTo: userName.bottomAnchor),
             userAge.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 16),
             userAge.rightAnchor.constraint(equalTo: profileView.rightAnchor),
-            userAge.bottomAnchor.constraint(equalTo: profileView.bottomAnchor)
+            userAge.bottomAnchor.constraint(equalTo: profileView.bottomAnchor),
+            userAge.heightAnchor.constraint(equalTo: userName.heightAnchor, multiplier: 1)
         ])
 
     }
