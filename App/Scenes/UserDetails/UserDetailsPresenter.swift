@@ -9,7 +9,7 @@
 import UIKit
 
 protocol UserDetailsPresentation: class {
-    
+    var user: User { get }
 }
 
 
@@ -18,7 +18,7 @@ class UserDetailsPresenter: UserDetailsPresentation {
     private weak var view: UserDetailsDisplay?
     private var router: UserDetailsRouting?
     
-    private let user: User
+    var user: User
     
     //MARK: Object lifecycle
     
@@ -27,6 +27,5 @@ class UserDetailsPresenter: UserDetailsPresentation {
         self.user = user
         router = resolve(argument: view.viewController)
         
-        self.view?.displayUser(user)
     }
 }

@@ -9,8 +9,9 @@
 import UIKit
 
 
+private let kLoremIpsumString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras eu semper velit. Nam tempor gravida libero, a gravida odio dapibus at. Donec sagittis neque lacus, vel posuere tortor volutpat et. Nulla ut tempor arcu. Quisque id sapien at augue elementum consequat. Vestibulum ac consequat quam."
+
 protocol UserDetailsDisplay: Display {
-    func displayUser(_ user: User)
 }
 
 
@@ -18,14 +19,178 @@ class UserDetailsViewController: UIViewController, UserDetailsDisplay {
     
     private var presenter: UserDetailsPresentation?
     
-    private var userProperties: [(key: String, value: String)] = []
+    //MARK: UI Components
     
-    //MARK: UI components
-    
-    private let tableView = UITableView().apply { tableView in
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+    private let scrollView = UIScrollView().apply { scrollView in
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
     }
     
+    private let stackView = UIStackView().apply { stackView in
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.distribution = .fill
+        stackView.alignment = .fill
+        stackView.axis = .vertical
+    }
+    
+    private lazy var addressView = UIView().apply { view in
+        view.backgroundColor = UIColor(named: "surface")
+        
+        view.layoutMargins = .init(top: 16, left: 16, bottom: 16, right: 16)
+        
+        let user = self.presenter!.user
+        
+        let cityName = UILabel()
+        cityName.translatesAutoresizingMaskIntoConstraints = false
+        cityName.attributedText = .init(string: "\(user.address.city), \(user.address.country)", style: .h4Left)
+        view.addSubview(cityName)
+        NSLayoutConstraint.activate([
+            cityName.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+            cityName.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
+            cityName.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor)
+        ])
+        
+        let streetName = UILabel()
+        streetName.translatesAutoresizingMaskIntoConstraints = false
+        streetName.attributedText = .init(string: "\(user.address.number) \(user.address.streetName)", style: .h2Left)
+        view.addSubview(streetName)
+        NSLayoutConstraint.activate([
+            streetName.topAnchor.constraint(equalTo: cityName.bottomAnchor, constant: 4),
+            streetName.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
+            streetName.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
+            streetName.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
+        ])
+        
+        let separator = Separator(thickness: 1)
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(separator)
+        NSLayoutConstraint.activate([
+            separator.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
+            separator.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
+            separator.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        
+    }
+    
+    private let roomDescription = UIView().apply { view in
+        view.backgroundColor = UIColor(named: "surface")
+        view.layoutMargins = .init(top: 16, left: 16, bottom: 16, right: 16)
+        
+        let title = UILabel()
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.attributedText = .init(string: "Room description", style: .h3Left)
+        view.addSubview(title)
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+            title.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
+            title.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor)
+        ])
+
+        let description = UILabel()
+        description.translatesAutoresizingMaskIntoConstraints = false
+        description.numberOfLines = 0
+        description.attributedText = .init(string: kLoremIpsumString, style: .bodyPrimaryLeft)
+        
+        view.addSubview(description)
+        NSLayoutConstraint.activate([
+            description.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 8),
+            description.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
+            description.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
+            description.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
+        ])
+    }
+    
+    private lazy var amenitiesView = UIView().apply { view in
+        view.backgroundColor = .clear
+        view.layoutMargins = .init(top: 16, left: 16, bottom: 16, right: 16)
+        
+        let title = UILabel()
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.attributedText = .init(string: "Amenities", style: .h3Left)
+        view.addSubview(title)
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+            title.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
+            title.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor)
+        ])
+        
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.distribution = .equalSpacing
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
+        
+        view.addSubview(stackView)
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 16),
+            stackView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
+            stackView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
+            stackView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
+        ])
+        
+        stackView.addArrangedSubview(AmenityView(image: UIImage(named: "icon-wifi")!, text: "WiFi"))
+        stackView.addArrangedSubview(AmenityView(image: UIImage(named: "icon-ac")!, text: "AC"))
+        stackView.addArrangedSubview(AmenityView(image: UIImage(named: "icon-tv")!, text: "TV"))
+        stackView.addArrangedSubview(AmenityView(image: UIImage(named: "icon-dog")!, text: "Pets allowed"))
+        
+    }
+    
+    private lazy var aboutView = UIView().apply { view in
+        view.backgroundColor = UIColor(named: "surface")
+        view.layoutMargins = .init(top: 16, left: 16, bottom: 16, right: 16)
+        
+        let user = self.presenter!.user
+        
+        let title = UILabel()
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.attributedText = .init(string: "About roommate", style: .h3Left)
+        view.addSubview(title)
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+            title.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
+            title.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor)
+        ])
+        
+        let profileImage = UserPictureView(size: .medium)
+        profileImage.translatesAutoresizingMaskIntoConstraints = false
+        profileImage.picture = user.picture
+        view.addSubview(profileImage)
+        NSLayoutConstraint.activate([
+            profileImage.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 16),
+            profileImage.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor)
+        ])
+        
+        let userName = UILabel()
+        userName.translatesAutoresizingMaskIntoConstraints = false
+        userName.attributedText = .init(string: user.fullName, style: .h3Left)
+        view.addSubview(userName)
+        NSLayoutConstraint.activate([
+            userName.leftAnchor.constraint(equalTo: profileImage.rightAnchor, constant: 16),
+            userName.rightAnchor.constraint(lessThanOrEqualTo: view.layoutMarginsGuide.rightAnchor),
+            userName.bottomAnchor.constraint(equalTo: profileImage.centerYAnchor, constant: -2)
+        ])
+        
+        let userAge = UILabel()
+        userAge.translatesAutoresizingMaskIntoConstraints = false
+        userAge.attributedText = .init(string: "\(user.age) years old", style: .bodyPrimaryLeft)
+        view.addSubview(userAge)
+        NSLayoutConstraint.activate([
+            userAge.topAnchor.constraint(equalTo: profileImage.centerYAnchor, constant: 2),
+            userAge.leftAnchor.constraint(equalTo: profileImage.rightAnchor, constant: 16),
+            userAge.rightAnchor.constraint(lessThanOrEqualTo: view.layoutMarginsGuide.rightAnchor)
+        ])
+        
+        let description = UILabel()
+        description.translatesAutoresizingMaskIntoConstraints = false
+        description.numberOfLines = 0
+        description.attributedText = .init(string: kLoremIpsumString, style: .bodyPrimaryLeft)
+        view.addSubview(description)
+        NSLayoutConstraint.activate([
+            description.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 16),
+            description.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
+            description.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
+            description.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
+        ])
+    }
     
     //MARK: Object lifecycle
     
@@ -38,26 +203,41 @@ class UserDetailsViewController: UIViewController, UserDetailsDisplay {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     //MARK: View lifecycle
     
     override func loadView() {
         super.loadView()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(named: "background")
         
-        self.setupTableView()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.addSubview(tableView)
+        view.addSubview(scrollView)
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.safeLeftAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.safeRightAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
+            scrollView.leftAnchor.constraint(equalTo: view.safeLeftAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.safeTopAnchor),
+            scrollView.rightAnchor.constraint(equalTo: view.safeRightAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
         ])
+        
+        scrollView.addSubview(stackView)
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            stackView.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
+            stackView.rightAnchor.constraint(equalTo: scrollView.rightAnchor),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 1)
+        ])
+        
+        stackView.addArrangedSubview(UIImageView(image: UIImage(named: "image-appartment-1")))
+        
+        stackView.addArrangedSubview(addressView)
+        stackView.addArrangedSubview(roomDescription)
+        stackView.addArrangedSubview(amenitiesView)
+        stackView.addArrangedSubview(aboutView)
+        
     }
     
     
@@ -66,39 +246,47 @@ class UserDetailsViewController: UIViewController, UserDetailsDisplay {
     var screenName: String? = "UserDetails"
     
     func displayUser(_ user: User) {
-        navigationItem.title = user.fullName
-        userProperties = [
-            (key: "First name", value: user.firstName),
-            (key: "Last name", value: user.lastName),
-            (key: "Email", value: user.email),
-            (key: "Nationality", value: user.nationality),
-            (key: "Phone", value: user.phoneNumber),
-        ]
-        tableView.reloadData()
+        
     }
 }
 
-extension UserDetailsViewController: UITableViewDataSource {
+private class AmenityView: UIView {
     
-    private static let kUserPropertyCell = "UserPropertyCell"
-    
-    private func setupTableView() {
-        self.tableView.backgroundColor = .clear
-        self.tableView.dataSource = self
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int { 1 }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        userProperties.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: UserDetailsViewController.kUserPropertyCell) ?? UITableViewCell(style: .value1, reuseIdentifier: UserDetailsViewController.kUserPropertyCell)
+    init(image: UIImage, text: String) {
+        super.init(frame: .zero)
         
-        let property = userProperties[indexPath.row]
-        cell.textLabel?.text = property.key
-        cell.detailTextLabel?.text = property.value
-        return cell
+        let imageView = UIImageView(image: image)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.backgroundColor = UIColor(named: "surface")
+        imageView.tintColor = UIColor(named: "primary300")
+        imageView.contentMode = .center
+        imageView.layer.cornerRadius = 24
+        imageView.layer.masksToBounds = true
+        
+        addSubview(imageView)
+        NSLayoutConstraint.activate([
+            imageView.heightAnchor.constraint(equalToConstant: 48),
+            imageView.widthAnchor.constraint(equalToConstant: 48),
+            imageView.topAnchor.constraint(equalTo: topAnchor),
+            imageView.leftAnchor.constraint(equalTo: leftAnchor),
+            imageView.rightAnchor.constraint(equalTo: rightAnchor)
+        ])
+        
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.attributedText = .init(string: text, style: .bodyPrimaryCenter)
+        
+        addSubview(label)
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
+            label.leftAnchor.constraint(equalTo: leftAnchor),
+            label.rightAnchor.constraint(equalTo: rightAnchor),
+            label.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
     }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }

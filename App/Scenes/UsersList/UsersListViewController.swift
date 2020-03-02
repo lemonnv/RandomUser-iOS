@@ -67,7 +67,7 @@ class UsersListViewController: UIViewController, UsersListDisplay {
     override func loadView() {
         super.loadView()
         
-        navigationItem.title = "RandomUser"
+        navigationItem.title = "RandomRoomate"
         
         view.backgroundColor = UIColor(named: "background")
         setupKolodaView()
@@ -166,6 +166,10 @@ extension UsersListViewController: KolodaViewDelegate, KolodaViewDataSource {
     
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
         self.presenter?.loadUsers(forceRefresh: true)
+    }
+    
+    func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {
+        self.presenter?.present(user: self.users[index])
     }
 }
 

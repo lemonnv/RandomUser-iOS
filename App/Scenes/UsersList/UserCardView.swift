@@ -27,10 +27,8 @@ class UserCardView: UIView {
         streetAddress.numberOfLines = 1
     }
     
-    private let seperator = UIView().apply { separator in
+    private let seperator = Separator(thickness: 1).apply { separator in
         separator.translatesAutoresizingMaskIntoConstraints = false
-        separator.backgroundColor = UIColor(named: "primary100")
-        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
     }
     
     private lazy var profileView = UIView().apply { profileView in
