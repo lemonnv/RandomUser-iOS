@@ -15,6 +15,10 @@ class UserCardView: UIView {
     private let imageView = UIImageView().apply { imageView in
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.addSublayer(CAGradientLayer().apply {
+            $0.colors = [UIColor(white: 0.0, alpha: 0.0).cgColor, UIColor(white: 0.0, alpha: 0.8).cgColor]
+            $0.locations = [0.7]
+        })
     }
     
     private let cityLabel = UILabel().apply { cityLabel in
@@ -124,6 +128,11 @@ class UserCardView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        imageView.layer.sublayers?.first?.frame = imageView.bounds
     }
     
     //MARK: Public properties
